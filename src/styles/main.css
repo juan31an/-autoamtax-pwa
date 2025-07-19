@@ -1,0 +1,260 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Inter font for optimal readability */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+
+/* CSS Custom Properties for theming */
+:root {
+  /* Color scheme */
+  --color-primary: theme('colors.primary.800');
+  --color-primary-light: theme('colors.primary.600');
+  --color-secondary: theme('colors.secondary.500');
+  --color-accessible: theme('colors.accessible.600');
+  
+  /* Accessibility */
+  --focus-ring: 0 0 0 3px theme('colors.primary.200');
+  --touch-target-min: 48px;
+  
+  /* Animation durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* Z-index scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 leading-relaxed;
+    font-synthesis: none;
+    overscroll-behavior: none;
+  }
+  
+  /* Headings use display font for better readability */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lexend', 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg font-medium transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-800 text-white hover:bg-primary-700 focus-visible:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-500 text-white hover:bg-secondary-600 focus-visible:ring-secondary-400;
+  }
+  
+  .btn-accessible {
+    @apply bg-accessible-600 text-white hover:bg-accessible-700 focus-visible:ring-accessible-400;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-500;
+  }
+  
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden;
+  }
+  
+  .card-accessible {
+    @apply ring-2 ring-accessible-200 border-accessible-300;
+  }
+  
+  /* Form styles */
+  .form-input {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-target;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  /* Navigation styles */
+  .nav-item {
+    @apply flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 touch-target;
+  }
+  
+  .nav-item-active {
+    @apply bg-primary-100 text-primary-800;
+  }
+  
+  .nav-item-inactive {
+    @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+  /* Accessibility utilities */
+  .sr-only-focusable {
+    @apply sr-only;
+  }
+  
+  .sr-only-focusable:focus,
+  .sr-only-focusable:active {
+    @apply not-sr-only;
+    @apply absolute top-0 left-0 z-50 p-2 bg-white border border-gray-300 rounded shadow-lg;
+  }
+  
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn var(--duration-normal) ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp var(--duration-normal) ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight var(--duration-normal) ease-out;
+  }
+  
+  /* Touch feedback */
+  .touch-feedback {
+    @apply transition-transform duration-75 active:scale-95;
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  /* Loading skeleton */
+  .skeleton {
+    @apply bg-gray-200 animate-pulse rounded;
+  }
+  
+  /* Safe area utilities */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+  
+  .dark-auto {
+    @apply bg-gray-900 text-gray-100;
+  }
+  
+  .dark-auto .card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .dark-auto .form-input {
+    @apply bg-gray-800 border-gray-600 text-gray-100;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --tw-border-opacity: 1;
+    --tw-text-opacity: 1;
+  }
+  
+  .btn {
+    @apply border-2 border-current;
+  }
+  
+  .form-input {
+    @apply border-2 border-gray-900;
+  }
+}

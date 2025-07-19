@@ -1,0 +1,169 @@
+# 1. Crear script de validación básica
+cat > scripts/claude-validation.js << 'EOF'
+#!/usr/bin/env node
+
+const { chromium } = require('@playwright/test');
+const fs = require('fs').promises;
+
+async function validateApp() {
+  console.log('🔍 Iniciando validación...');
+  
+  try {
+    // Verificar servidor
+    const response = await fetch('http://localhost:3000');
+    if (!response.ok) throw new Error('Servidor no disponible');
+    
+    console.log('✅ Servidor corriendo');
+    
+    // Captura con Playwright
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    
+    // Capturar errores de consola
+    const errors = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') errors.push(msg.text());
+    });
+    
+    await page.goto('http://localhost:3000');
+    await page.screenshot({ 
+      path: '.claude/validation-results/current-state.png',
+      fullPage: true 
+    });
+    
+    await browser.close();
+    
+    // Guardar reporte
+    const report = {
+      timestamp: new Date().toISOString(),
+      server: 'running',
+      screenshot: '.claude/validation-results/current-state.png',
+      consoleErrors: errors,
+      status: errors.length === 0 ? 'success' : 'warning'
+    };
+    
+    await fs.writeFile('.claude/validation-results/report.json', JSON.stringify(report, null, 2));
+    
+    console.log('✅ Validación completada');
+    console.log(`📸 Screenshot: ${report.screenshot}`);
+    console.log(`📄 Reporte: .claude/validation-results/report.json`);
+    
+    if (errors.length > 0) {
+      console.log('⚠️  Errores de consola encontrados:', errors.length);
+    }
+    
+    return report.status === 'success';
+    
+  } catch (error) {
+    console.log('❌ Error en validación:', error.message);
+    console.log('💡 ¿Está el servidor corriendo? Ejecuta: npm run dev');
+    return false;
+  }
+}
+
+if (require.main === module) {
+  validateApp().then(success => process.exit(success ? 0 : 1));
+}
+
+module.exports = { validateApp };
+EOF
+
+# 2. Crear script de workflow
+cat > scripts/claude-workflow.js << 'EOF'
+#!/usr/bin/env node
+
+const { validateApp } = require('./claude-validation');
+const fs = require('fs').promises;
+
+async function runWorkflow() {
+  console.log('🚀 CLAUDE CODE WORKFLOW INICIADO\n');
+  
+  try {
+    // 1. Validación técnica
+    console.log('📋 Paso 1: Validación técnica...');
+    const validationSuccess = await validateApp();
+    
+    // 2. Análisis del proyecto
+    console.log('\n📊 Paso 2: Analizando proyecto...');
+    const projectInfo = {
+      timestamp: new Date().toISOString(),
+      name: 'taxi-app',
+      validation: validationSuccess ? 'passed' : 'failed',
+      recommendations: []
+    };
+    
+    if (!validationSuccess) {
+      projectInfo.recommendations.push('Resolver errores de consola detectados');
+    }
+    
+    // 3. Guardar reporte maestro
+    const masterReport = `# 🤖 Reporte Claude Code
+
+**Fecha**: ${new Date().toLocaleString()}
+**Proyecto**: ${projectInfo.name}
+**Estado**: ${validationSuccess ? '✅ OK' : '❌ Necesita atención'}
+
+## Validación Técnica
+${validationSuccess ? '✅ Todas las validaciones pasaron' : '❌ Se encontraron problemas'}
+
+## Screenshots
+- Estado actual: \`.claude/validation-results/current-state.png\`
+
+## Archivos Generados
+- Reporte JSON: \`.claude/validation-results/report.json\`
+- Screenshot: \`.claude/validation-results/current-state.png\`
+
+${projectInfo.recommendations.length > 0 ? `## Recomendaciones
+${projectInfo.recommendations.map(r => `- ${r}`).join('\n')}` : ''}
+
+---
+*Generado automáticamente por Claude Code*
+`;
+    
+    await fs.writeFile('.claude/master-report.md', masterReport);
+    await fs.writeFile('.claude/workflow-result.json', JSON.stringify(projectInfo, null, 2));
+    
+    console.log('\n📋 RESUMEN DEL WORKFLOW:');
+    console.log('━'.repeat(40));
+    console.log(`✨ Estado: ${validationSuccess ? 'ÉXITO' : 'ATENCIÓN REQUERIDA'}`);
+    console.log(`📸 Screenshot: .claude/validation-results/current-state.png`);
+    console.log(`📄 Reporte: .claude/master-report.md`);
+    
+    return validationSuccess;
+    
+  } catch (error) {
+    console.log('❌ Error en workflow:', error.message);
+    return false;
+  }
+}
+
+if (require.main === module) {
+  runWorkflow().then(success => process.exit(success ? 0 : 1));
+}
+EOF
+
+# 3. Agregar scripts a package.json
+echo "Agregando scripts a package.json..."
+node -e "
+const fs = require('fs');
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts['claude:validate'] = 'node scripts/claude-validation.js';
+pkg.scripts['claude:workflow'] = 'node scripts/claude-workflow.js';
+pkg.scripts['claude:clean'] = 'rm -rf .claude/validation-results/* .claude/visual-feedback/*';
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+console.log('✅ Scripts agregados a package.json');
+"
+
+# 4. Dar permisos
+chmod +x scripts/*.js
+
+echo "🎉 ¡Setup completo!"
+echo ""
+echo "🚀 Comandos disponibles:"
+echo "  npm run claude:validate  # Validación rápida"
+echo "  npm run claude:workflow  # Análisis completo"
+echo ""
+echo "🧪 Para probar:"
+echo "1. Inicia tu servidor: npm run dev (en otra terminal)"
+echo "2. Ejecuta: npm run claude:validate"

@@ -1,0 +1,113 @@
+{
+  "name": "AutoamTax Pro - Gestión de Transporte Accesible",
+  "short_name": "AutoamTax",
+  "description": "Sistema profesional de gestión para transporte accesible adaptado para personas con discapacidad",
+  "theme_color": "#1E40AF",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "id": "com.autoamtax.app",
+  "categories": ["business", "productivity", "transportation", "accessibility"],
+  "lang": "es",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "pwa-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-mobile-1.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard principal en móvil"
+    },
+    {
+      "src": "screenshot-desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vista de dashboard en escritorio"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva reserva",
+      "short_name": "Reservar",
+      "description": "Crear una nueva reserva de viaje",
+      "url": "/trips/new",
+      "icons": [
+        {
+          "src": "shortcut-new-booking.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Reserva accesible",
+      "short_name": "Accesible",
+      "description": "Reserva para pasajero con necesidades especiales",
+      "url": "/accessibility/booking",
+      "icons": [
+        {
+          "src": "shortcut-accessibility.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Estado socios",
+      "short_name": "Socios",
+      "description": "Ver estado actual de los socios",
+      "url": "/partners",
+      "icons": [
+        {
+          "src": "shortcut-partners.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.autoamtax.app",
+      "id": "com.autoamtax.app"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+autoamtax",
+      "url": "/booking?data=%s"
+    }
+  ]
+}
