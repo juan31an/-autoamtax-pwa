@@ -19,7 +19,6 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            z-index: 9999;
         }
         .spinner {
             width: 40px;
@@ -43,18 +42,5 @@
         <p>Cargando...</p>
     </div>
     <div id="app"></div>
-    
-    <script type="module" src="/src/main.ts"></script>
-    <script>
-        // Hide loading after Vue mounts
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loading = document.getElementById('loading');
-                if (loading) {
-                    loading.style.display = 'none';
-                }
-            }, 2000);
-        });
-    </script>
 </body>
 </html>
